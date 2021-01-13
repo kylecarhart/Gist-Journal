@@ -1,26 +1,29 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import styled from "styled-components";
+import { useGistAPI } from "./hooks/useGistAPI";
 
-function App() {
+export default function App() {
+  const GistAPI = useGistAPI(""); // NOTE: put PAT here
+
+  async function handleClick() {
+    const { files } = await GistAPI.get(""); // NOTE: put example gist id here
+    for (const key in files) {
+      if (Object.prototype.hasOwnProperty.call(files, key)) {
+        const { content } = files[key];
+        console.log(content);
+      }
+    }
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <AppWrapper>
+      <h1>This works!</h1>
+      <button onClick={handleClick}>Click me, check logs.</button>
+    </AppWrapper>
   );
 }
 
-export default App;
+const AppWrapper = styled.div`
+  max-width: 56.25rem;
+  margin: 1rem auto 0 auto;
+`;
