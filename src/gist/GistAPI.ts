@@ -13,6 +13,18 @@ export function GistAPI(token: string) {
     accept: "application/vnd.github.v3+json",
   };
 
+  async function getAllGists(): Promise<Gist[]> {
+    const res = await fetch(`${BASE_URL}`, {
+      headers,
+    });
+
+    if (res.status === 200) {
+      return await res.json();
+    } else {
+      throw res;
+    }
+  }
+
   /**
    * Retrieve a Gist based on the provided ID.
    * @param gistId - The ID of the Gist.
@@ -22,7 +34,11 @@ export function GistAPI(token: string) {
       headers,
     });
 
-    return await res.json();
+    if (res.status === 200) {
+      return await res.json();
+    } else {
+      throw res;
+    }
   }
 
   /**
@@ -40,7 +56,11 @@ export function GistAPI(token: string) {
       body: JSON.stringify({ description: "", ...gist }),
     });
 
-    return await res.json();
+    if (res.status === 201) {
+      return await res.json();
+    } else {
+      throw res;
+    }
   }
 
   /**
@@ -61,7 +81,11 @@ export function GistAPI(token: string) {
       body: JSON.stringify({ ...gist }),
     });
 
-    return await res.json();
+    if (res.status === 200) {
+      return await res.json();
+    } else {
+      throw res;
+    }
   }
 
   /**
@@ -69,11 +93,17 @@ export function GistAPI(token: string) {
    * @param gistId - The ID of the Gist.
    */
   async function deleteGist(gistId: string) {
-    await fetch(`${BASE_URL}/${gistId}`, {
+    const res = await fetch(`${BASE_URL}/${gistId}`, {
       method: "DELETE",
       headers,
     });
+
+    if (res.status === 204) {
+      return;
+    } else {
+      throw res;
+    }
   }
 
-  return { getGist, createGist, updateGist, deleteGist };
+  return { getAllGists, getGist, createGist, updateGist, deleteGist };
 }

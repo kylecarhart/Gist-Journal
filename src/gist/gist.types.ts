@@ -1,5 +1,5 @@
 interface File {
-  content: string;
+  content?: string;
   filename: string;
   language: string;
   raw_url: string;
