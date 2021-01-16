@@ -1,5 +1,5 @@
 import React, { ReactElement, useState } from "react";
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 import { ReactComponent as GithubLogo } from "../public/github.svg";
 
 interface LoginProps {
@@ -52,6 +52,18 @@ const FlexWrapper = styled.div`
   align-items: center;
 `;
 
+const fadeIn = keyframes`
+  from {
+    transform: translate(0, -1rem);
+    opacity: .4;
+  }
+
+  to {
+    transform: translate(0, 0)
+    opacity: 1;
+  }
+`;
+
 const StyledLogin = styled.div`
   display: flex;
   flex-direction: column;
@@ -64,6 +76,8 @@ const StyledLogin = styled.div`
   background-color: #ffffff;
   box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px,
     rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
+
+  animation: ${fadeIn} 0.8s ease-out forwards;
 `;
 
 const Input = styled.input`
@@ -83,9 +97,13 @@ const Button = styled.button`
   margin-top: 1rem;
   padding: 0.5rem 0;
   background: #8a63d2;
+  border: 1px solid #6f42c1;
   color: #ffffff;
-  border: 1px solid #8a63d2;
   border-radius: 0.2rem;
+
+  &:hover {
+    background: #6f42c1;
+  }
 `;
 
 const GitLogo = styled.img`
