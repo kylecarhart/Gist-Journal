@@ -1,28 +1,19 @@
 import { Gist } from "./gist.types";
+import GithubAPI from "../github/GithubAPI";
 
-const BASE_URL: string = "https://api.github.com/gists";
-
-interface FileRequest {
-  content: string;
-  filename?: string;
-}
+const GIST_ENDPOINT: string = "/gists";
 
 export function GistAPI(token: string) {
-  const headers = {
-    authorization: `token ${token}`,
-    accept: "application/vnd.github.v3+json",
-  };
+  const api = GithubAPI(token);
 
-  async function getAllGists(): Promise<Gist[]> {
-    const res = await fetch(`${BASE_URL}`, {
-      headers,
-    });
-
-    if (res.status === 200) {
-      return await res.json();
-    } else {
-      throw res;
-    }
+  /**
+   * Get authenticated users
+   */
+  function getAllGists(params?: {
+    per_page?: number;
+    page?: number;
+  }): Promise<Gist[]> {
+    return api.fetch(GIST_ENDPOINT, { params });
   }
 
   /**
@@ -30,15 +21,7 @@ export function GistAPI(token: string) {
    * @param gistId - The ID of the Gist.
    */
   async function getGist(gistId: string): Promise<Gist> {
-    const res = await fetch(`${BASE_URL}/${gistId}`, {
-      headers,
-    });
-
-    if (res.status === 200) {
-      return await res.json();
-    } else {
-      throw res;
-    }
+    return api.fetch(`${GIST_ENDPOINT}/${gistId}`);
   }
 
   /**
@@ -46,21 +29,19 @@ export function GistAPI(token: string) {
    * @param gist - Gist request object.
    */
   async function createGist(gist: {
-    files: { [key: string]: FileRequest };
+    files: {
+      [key: string]: {
+        content: string;
+        filename?: string;
+      };
+    };
     public: boolean;
     description?: string;
   }): Promise<Gist> {
-    const res = await fetch(BASE_URL, {
+    return api.fetch(GIST_ENDPOINT, {
       method: "POST",
-      headers,
       body: JSON.stringify({ description: "", ...gist }),
     });
-
-    if (res.status === 201) {
-      return await res.json();
-    } else {
-      throw res;
-    }
   }
 
   /**
@@ -72,20 +53,18 @@ export function GistAPI(token: string) {
     gistId: string,
     gist: {
       description?: string;
-      files: { [key: string]: FileRequest };
+      files: {
+        [key: string]: {
+          content: string;
+          filename?: string;
+        };
+      };
     }
   ): Promise<Gist> {
-    const res = await fetch(`${BASE_URL}/${gistId}`, {
+    return api.fetch(`${GIST_ENDPOINT}/${gistId}`, {
       method: "PATCH",
-      headers,
       body: JSON.stringify({ ...gist }),
     });
-
-    if (res.status === 200) {
-      return await res.json();
-    } else {
-      throw res;
-    }
   }
 
   /**
@@ -93,16 +72,9 @@ export function GistAPI(token: string) {
    * @param gistId - The ID of the Gist.
    */
   async function deleteGist(gistId: string) {
-    const res = await fetch(`${BASE_URL}/${gistId}`, {
+    return api.fetch(`${GIST_ENDPOINT}/${gistId}`, {
       method: "DELETE",
-      headers,
     });
-
-    if (res.status === 204) {
-      return;
-    } else {
-      throw res;
-    }
   }
 
   return { getAllGists, getGist, createGist, updateGist, deleteGist };
