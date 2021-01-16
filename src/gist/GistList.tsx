@@ -10,19 +10,25 @@ interface Props {
 export default function GistList({ gists, selectGist }: Props): ReactElement {
   return (
     <FlexWrapper>
-      <StyledGistList>
-        {gists.map((gist) => (
-          <GistListItem
-            key={gist.id}
-            onClick={() => {
-              selectGist(gist);
-            }}
-          >
-            <GistDescription>{gist.description}</GistDescription>
-            <GistId>{gist.id.substr(0, 7)}</GistId>
-          </GistListItem>
-        ))}
-      </StyledGistList>
+      <Container>
+        <h2>Select a Gist:</h2>
+        <StyledGistList>
+          {gists.map((gist) => (
+            <GistListItem
+              key={gist.id}
+              onClick={() => {
+                selectGist(gist);
+              }}
+            >
+              <div>
+                <Description>{gist.description}</Description>
+                <GistId>{gist.id.substr(0, 7)}</GistId>
+              </div>
+              <Button>Delete</Button>
+            </GistListItem>
+          ))}
+        </StyledGistList>
+      </Container>
     </FlexWrapper>
   );
 }
@@ -33,6 +39,16 @@ const FlexWrapper = styled.div`
 
   display: flex;
   justify-content: center;
+  align-items: center;
+`;
+
+const Container = styled.div`
+  width: 100%;
+  background-color: #fff;
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px,
+    rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
+  display: flex;
+  flex-direction: column;
   align-items: center;
 `;
 
@@ -49,10 +65,12 @@ const GistListItem = styled.li`
   cursor: pointer;
   background: #ffffff;
   list-style: none;
-  margin: 0 0 0.5rem 0;
-  padding: 1rem;
-  border: 1px solid #333;
+  padding: 0.4rem 1rem;
   border-radius: 0.3rem;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 
   &:hover {
     background: #f5f5f5;
@@ -65,6 +83,15 @@ const GistId = styled.span`
   border-radius: 0.2rem;
 `;
 
-const GistDescription = styled.span`
+const Description = styled.span`
   margin: 0 0.5rem 0 0;
+`;
+
+const Button = styled.button`
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  background: #8a63d2;
+  color: #ffffff;
+  border: 1px solid #8a63d2;
+  border-radius: 0.2rem;
 `;
