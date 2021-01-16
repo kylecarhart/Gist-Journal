@@ -96,13 +96,13 @@ const Button = styled.button`
   width: 100%;
   margin-top: 1rem;
   padding: 0.5rem 0;
-  background: #8a63d2;
-  border: 1px solid #6f42c1;
+  background: #63d2a3;
+  border: 1px solid #5ac599;
   color: #ffffff;
   border-radius: 0.2rem;
 
   &:hover {
-    background: #6f42c1;
+    background: #5ac599;
   }
 `;
 
