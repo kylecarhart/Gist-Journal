@@ -77,7 +77,7 @@ const StyledLogin = styled.div`
   box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px,
     rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
 
-  animation: ${fadeIn} 0.8s ease-out forwards;
+  animation: ${fadeIn} 0.8s cubic-bezier(0, 0.55, 0.45, 1) forwards;
 `;
 
 const Input = styled.input`
@@ -104,8 +104,4 @@ const Button = styled.button`
   &:hover {
     background: #5ac599;
   }
-`;
-
-const GitLogo = styled.img`
-  /* margin-top: 2rem; */
 `;
