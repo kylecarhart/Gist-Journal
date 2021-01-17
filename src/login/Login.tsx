@@ -15,8 +15,7 @@ export function Login({ tryToken, ...props }: LoginProps): ReactElement {
         <GithubLogo />
         <h5>Sign in with Github</h5>
         <p style={{ margin: "0 0 3rem 0" }}>
-          To log in, create a Personal Access Token for your account with gist
-          permissions.
+          Enter a Personal Access Token with Gist permissions.
         </p>
 
         <Label htmlFor="token">Personal Access Token</Label>
@@ -39,6 +38,12 @@ export function Login({ tryToken, ...props }: LoginProps): ReactElement {
         >
           Sign in
         </Button>
+        <HelpLink
+          style={{ marginTop: ".5rem", fontSize: ".875rem" }}
+          href="https://github.com/settings/tokens/new"
+        >
+          Create a token here
+        </HelpLink>
       </StyledLogin>
     </FlexWrapper>
   );
@@ -108,4 +113,9 @@ const Button = styled.button`
   &:hover {
     background: #5ac599;
   }
+`;
+
+const HelpLink = styled.a`
+  margin: 0.5rem 0 0 0;
+  font-size: 0.875rem;
 `;
