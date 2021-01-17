@@ -19,8 +19,9 @@ export function Login({ tryToken, ...props }: LoginProps): ReactElement {
           permissions.
         </p>
 
+        <Label htmlFor="token">Personal Access Token</Label>
         <Input
-          placeholder="Enter token..."
+          id="token"
           value={input}
           onChange={(e) => {
             setInput(e.target.value);
@@ -80,10 +81,13 @@ const StyledLogin = styled.div`
   animation: ${fadeIn} 0.8s cubic-bezier(0, 0.55, 0.45, 1) forwards;
 `;
 
+const Label = styled.label`
+  align-self: flex-start;
+  font-size: 0.875rem;
+  color: #666;
+`;
+
 const Input = styled.input`
-  &::placeholder {
-    color: #666;
-  }
   width: 100%;
   border: 1px solid #ccc;
   padding: 0.45rem;
