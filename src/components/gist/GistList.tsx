@@ -1,13 +1,24 @@
-import React, { ReactElement } from "react";
-import { Gist } from "./gist.types";
+import React, { ReactElement, useContext, useState, useEffect } from "react";
+import { Gist } from "../../api/types";
 import styled from "styled-components";
+import { TokenContext } from "../../App";
+import GistAPI from "../../api/GistAPI";
 
-interface Props {
-  gists: Gist[];
-  selectGist: (gist: Gist) => {};
-}
+interface Props {}
 
-export default function GistList({ gists, selectGist }: Props): ReactElement {
+export default function GistList({ ...props }: Props): ReactElement {
+  const token = useContext(TokenContext);
+  const [gists, setGists] = useState([] as Gist[]);
+
+  // useEffect(() => {
+  //   GistAPI(token!)
+  //     .getAllGists()
+  //     .then((gists) => {
+  //       setGists(gists);
+  //     });
+  //   return () => {};
+  // }, [token]);
+
   return (
     <FlexWrapper>
       <Container>
@@ -17,7 +28,7 @@ export default function GistList({ gists, selectGist }: Props): ReactElement {
             <GistListItem
               key={gist.id}
               onClick={() => {
-                selectGist(gist);
+                // selectGist(gist);
               }}
             >
               <div>

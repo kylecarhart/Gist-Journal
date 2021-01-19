@@ -1,5 +1,5 @@
-import { Gist } from "../gist/gist.types";
-import { GistAPI } from "../gist/GistAPI";
+import { Gist } from "../../api/types";
+import GistAPI from "../../api/GistAPI";
 
 export const JOURNAL_KEY = "DF848745-63E8-4700-8E02-BD8B53393C99";
 

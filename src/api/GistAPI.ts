@@ -1,19 +1,24 @@
-import { Gist } from "./gist.types";
-import GithubAPI from "../github/GithubAPI";
+import { Gist } from "./types";
+import GithubAPI from "./GithubAPI";
 
 const GIST_ENDPOINT: string = "/gists";
 
-export function GistAPI(token: string) {
+export default function GistAPI(token: string) {
   const api = GithubAPI(token);
 
   /**
    * Get authenticated users
    */
-  function getAllGists(params?: {
+  async function getAllGists(params?: {
     per_page?: number;
     page?: number;
   }): Promise<Gist[]> {
-    return api.fetch(GIST_ENDPOINT, { params });
+    const res = await api.fetch(GIST_ENDPOINT, { params });
+    if (res.status === 200) {
+      return res.json();
+    } else {
+      throw res;
+    }
   }
 
   /**
@@ -21,7 +26,13 @@ export function GistAPI(token: string) {
    * @param gistId - The ID of the Gist.
    */
   async function getGist(gistId: string): Promise<Gist> {
-    return api.fetch(`${GIST_ENDPOINT}/${gistId}`);
+    const res = await api.fetch(`${GIST_ENDPOINT}/${gistId}`);
+
+    if (res.status === 200) {
+      return res.json();
+    } else {
+      throw res;
+    }
   }
 
   /**
@@ -38,10 +49,16 @@ export function GistAPI(token: string) {
     public: boolean;
     description?: string;
   }): Promise<Gist> {
-    return api.fetch(GIST_ENDPOINT, {
+    const res = await api.fetch(GIST_ENDPOINT, {
       method: "POST",
       body: JSON.stringify({ description: "", ...gist }),
     });
+
+    if (res.status === 200) {
+      return res.json();
+    } else {
+      throw res;
+    }
   }
 
   /**
@@ -61,10 +78,16 @@ export function GistAPI(token: string) {
       };
     }
   ): Promise<Gist> {
-    return api.fetch(`${GIST_ENDPOINT}/${gistId}`, {
+    const res = await api.fetch(`${GIST_ENDPOINT}/${gistId}`, {
       method: "PATCH",
       body: JSON.stringify({ ...gist }),
     });
+
+    if (res.status === 200) {
+      return res.json();
+    } else {
+      throw res;
+    }
   }
 
   /**
@@ -72,9 +95,15 @@ export function GistAPI(token: string) {
    * @param gistId - The ID of the Gist.
    */
   async function deleteGist(gistId: string) {
-    return api.fetch(`${GIST_ENDPOINT}/${gistId}`, {
+    const res = await api.fetch(`${GIST_ENDPOINT}/${gistId}`, {
       method: "DELETE",
     });
+
+    if (res.status === 200) {
+      return res.json();
+    } else {
+      throw res;
+    }
   }
 
   return { getAllGists, getGist, createGist, updateGist, deleteGist };

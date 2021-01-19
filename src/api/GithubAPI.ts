@@ -38,14 +38,18 @@ export default function GithubAPI(token: string) {
    * @param - Options for headers or params
    */
   async function fetch(
-    endpoint: RequestInfo,
+    endpoint?: RequestInfo,
     opts?: {
       body?: BodyInit;
       method?: string;
       params?: Params;
     }
   ) {
-    let url = BASE_URL + endpoint;
+    let url = BASE_URL;
+
+    if (endpoint) {
+      url += endpoint;
+    }
 
     // Add search params if specified
     if (opts?.params) {
@@ -60,11 +64,22 @@ export default function GithubAPI(token: string) {
     });
 
     if (res.ok) {
-      return await res.json();
+      return res;
     } else {
       throw res;
     }
   }
 
-  return { fetch };
+  async function getAuthScopes(): Promise<string[]> {
+    const { headers } = await fetch();
+    const scopes = headers.get("X-OAuth-Scopes");
+
+    if (scopes) {
+      return scopes.split(",");
+    } else {
+      return [];
+    }
+  }
+
+  return { fetch, getAuthScopes };
 }

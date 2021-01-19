@@ -1,60 +1,27 @@
-import React, { ReactElement, useState } from "react";
+import React, { createContext, ReactElement, useState } from "react";
 import styled from "styled-components";
-import { Gist } from "./gist/gist.types";
-import { GistAPI } from "./gist/GistAPI";
-import { Login } from "./login/Login";
-import GistList from "./gist/GistList";
-import JournalAPI, { isJournal } from "./journal/JournalAPI";
+import { Login } from "./components/login/Login";
+import GistList from "./components/gist/GistList";
+
+type TokenState = string | null;
+
+export const TokenContext = createContext<TokenState>(null);
 
 export default function App(): ReactElement {
-  const [token, setToken] = useState<string | null>(null);
-  const [gists, setGists] = useState<Gist[] | null>(null);
-  const [selectedGist, setSelectedGist] = useState<Gist | null>(null);
-  const [text, setText] = useState("");
-
-  async function tryToken(input: string) {
-    try {
-      const res = await GistAPI(input).getAllGists();
-      setGists(res);
-      setToken(input);
-    } catch (res) {
-      if (res.status === 401) {
-        alert(res.statusText);
-      }
-    }
-  }
-
-  async function selectGist(selectedGist: Gist) {
-    try {
-      const gist = await GistAPI(token!).getGist(selectedGist.id);
-      if (isJournal(gist)) {
-        setSelectedGist(gist);
-        JournalAPI(token!).saveEntry(
-          gist,
-          "02",
-          "05",
-          "Text here!\nASDF!\nANOTHER"
-        );
-      }
-    } catch (res) {
-      alert(res.statusText);
-    }
-  }
+  const [token, setToken] = useState<TokenState>(null);
 
   return (
     <AppWrapper>
-      {!token && <Login tryToken={tryToken} />}
-      {gists && <GistList gists={gists} selectGist={selectGist} />}
-      {/* <div>
-        <textarea value={text} onChange={(e) => setText(e.target.value)} />
-        <button
-          onClick={() => {
-            JournalAPI(token!).saveEntry(selectedGist!, "02", "05", text);
+      {!token && (
+        <Login
+          setToken={(input) => {
+            setToken(input);
           }}
-        >
-          Click
-        </button>
-      </div> */}
+        />
+      )}
+      <TokenContext.Provider value={token}>
+        {token && <GistList />}
+      </TokenContext.Provider>
     </AppWrapper>
   );
 }
