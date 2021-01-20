@@ -9,15 +9,19 @@ interface Props {}
 export default function GistList({ ...props }: Props): ReactElement {
   const token = useContext(TokenContext);
   const [gists, setGists] = useState([] as Gist[]);
+  const [page, setPage] = useState(0);
 
-  // useEffect(() => {
-  //   GistAPI(token!)
-  //     .getAllGists()
-  //     .then((gists) => {
-  //       setGists(gists);
-  //     });
-  //   return () => {};
-  // }, [token]);
+  useEffect(() => {
+    GistAPI(token!)
+      .getAllGists({
+        page,
+        per_page: 10,
+      })
+      .then((gists) => {
+        setGists(gists);
+      });
+    return () => {};
+  }, [token, page]);
 
   return (
     <FlexWrapper>
@@ -45,36 +49,38 @@ export default function GistList({ ...props }: Props): ReactElement {
 }
 
 const FlexWrapper = styled.div`
-  width: 100%;
+  /* width: 100%;
   height: 100%;
 
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: center; */
 `;
 
 const Container = styled.div`
   width: 100%;
-  background-color: #fff;
-  box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px,
-    rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding: 1rem;
 `;
 
 const StyledGistList = styled.ol`
   display: flex;
   flex-direction: column;
   width: 100%;
+  padding: 3rem;
+  border: 1px solid #ddd;
+  border-radius: 0.5rem;
+  background: #f4f4f4;
+  box-shadow: inset 0px 2px 3px rgba(0, 0, 0, 0.03);
 
   margin: 0;
-  padding: 0;
+  padding: 2rem;
 `;
 
 const GistListItem = styled.li`
   cursor: pointer;
-  background: #ffffff;
   list-style: none;
   padding: 0.4rem 1rem;
   border-radius: 0.3rem;
@@ -84,7 +90,7 @@ const GistListItem = styled.li`
   align-items: center;
 
   &:hover {
-    background: #f5f5f5;
+    background: #e9e9e9;
   }
 `;
 
