@@ -28,6 +28,5 @@ export default function App(): ReactElement {
 
 const AppWrapper = styled.div`
   max-width: 64.286rem;
-  height: 100vh;
-  margin: 0 auto;
+  margin: 5rem auto 0 auto;
 `;

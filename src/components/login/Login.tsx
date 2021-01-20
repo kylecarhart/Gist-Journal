@@ -33,56 +33,45 @@ export function Login({ setToken, ...props }: LoginProps): ReactElement {
   }
 
   return (
-    <FlexWrapper>
-      <StyledLogin {...props}>
-        <GithubLogo />
-        <h5>Sign in with Github</h5>
-        <p style={{ margin: "0 0 3rem 0" }}>
-          Enter a Personal Access Token with Gist permissions.
-        </p>
+    <StyledLogin {...props}>
+      <GithubLogo />
+      <h5>Sign in with Github</h5>
+      <p style={{ margin: "0 0 3rem 0" }}>
+        Enter a Personal Access Token with Gist permissions.
+      </p>
 
-        <Label htmlFor="token">Personal Access Token</Label>
-        <Input
-          ref={inputRef}
-          id="token"
-          value={input}
-          onChange={(e) => {
-            setInput(e.target.value);
-          }}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              signIn();
-            }
-          }}
-          hasError={hasError}
-        />
-        {hasError && <ErrorText>{errorText}</ErrorText>}
-        <Button
-          onClick={() => {
+      <Label htmlFor="token">Personal Access Token</Label>
+      <Input
+        ref={inputRef}
+        id="token"
+        value={input}
+        onChange={(e) => {
+          setInput(e.target.value);
+        }}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
             signIn();
-          }}
-        >
-          Sign in
-        </Button>
-        <HelpLink
-          style={{ marginTop: ".5rem", fontSize: ".875rem" }}
-          href="https://github.com/settings/tokens/new"
-        >
-          Create a token here
-        </HelpLink>
-      </StyledLogin>
-    </FlexWrapper>
+          }
+        }}
+        hasError={hasError}
+      />
+      {hasError && <ErrorText>{errorText}</ErrorText>}
+      <Button
+        onClick={() => {
+          signIn();
+        }}
+      >
+        Sign in
+      </Button>
+      <HelpLink
+        style={{ marginTop: ".5rem", fontSize: ".875rem" }}
+        href="https://github.com/settings/tokens/new"
+      >
+        Create a token here
+      </HelpLink>
+    </StyledLogin>
   );
 }
-
-const FlexWrapper = styled.div`
-  width: 100%;
-  height: 100%;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
 
 const fadeIn = keyframes`
   from {
@@ -97,12 +86,13 @@ const fadeIn = keyframes`
 `;
 
 const StyledLogin = styled.div`
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
 
-  width: 26rem;
+  max-width: 26rem;
   padding: 3rem 3.6rem;
   border-radius: 0.5rem;
   background-color: #ffffff;
@@ -110,6 +100,10 @@ const StyledLogin = styled.div`
     rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
 
   animation: ${fadeIn} 0.8s cubic-bezier(0, 0.55, 0.45, 1) forwards;
+
+  @media (max-width: 450px) {
+    box-shadow: none;
+  }
 `;
 
 const Label = styled.label`
