@@ -16,20 +16,19 @@ const defaultJournal = {
   "10.json": { content: "{}" },
   "11.json": { content: "{}" },
   "12.json": { content: "{}" },
-  meta: {
-    content: JOURNAL_KEY,
-  },
 };
 
 export function isJournal(gist: Gist): boolean {
-  if (gist.files["meta"]?.content === JOURNAL_KEY) {
+  const regex = /^GistJournal[0-9]{4}$/;
+
+  if (regex.test(gist.description)) {
     return true;
   } else {
     return false;
   }
 }
 
-export default function JournalAPI(token: string) {
+export function JournalAPI(token: string) {
   const gistAPI = GistAPI(token);
 
   function createJournal(description: string) {
