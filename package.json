@@ -6,10 +6,6 @@
     "@testing-library/jest-dom": "^5.11.8",
     "@testing-library/react": "^11.2.2",
     "@testing-library/user-event": "^12.6.0",
-    "@types/jest": "^26.0.19",
-    "@types/node": "^12.19.12",
-    "@types/react": "^16.14.2",
-    "@types/react-dom": "^16.9.10",
     "lodash": "^4.17.20",
     "normalize.css": "^8.0.1",
     "react": "^17.0.1",
@@ -44,7 +40,11 @@
     ]
   },
   "devDependencies": {
+    "@types/jest": "^26.0.19",
     "@types/lodash": "^4.14.167",
+    "@types/node": "^12.19.12",
+    "@types/react": "^16.14.2",
+    "@types/react-dom": "^16.9.10",
     "@types/styled-components": "^5.1.7"
   }
 }
