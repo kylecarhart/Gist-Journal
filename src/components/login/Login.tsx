@@ -1,17 +1,16 @@
 import React, { ReactElement, useRef, useState } from "react";
+import { useHistory } from "react-router-dom";
 import styled, { keyframes } from "styled-components";
 import GithubAPI from "../../api/GithubAPI";
 import { ReactComponent as GithubLogo } from "./github.svg";
 
-interface LoginProps {
-  setToken: (token: string) => void;
-}
-
-export function Login({ setToken, ...props }: LoginProps): ReactElement {
+export function Login({ ...props }): ReactElement {
   const [input, setInput] = useState("");
   const [hasError, setHasError] = useState(false);
   const [errorText, setErrorText] = useState<string>("");
   const inputRef = useRef<HTMLInputElement>(null);
+
+  const history = useHistory();
 
   async function signIn() {
     try {
@@ -19,7 +18,7 @@ export function Login({ setToken, ...props }: LoginProps): ReactElement {
 
       // Make sure the token has access to gists
       if (scopes.includes("gist")) {
-        setToken(input);
+        history.push(`/token/${input}`);
       } else {
         setHasError(true);
         setErrorText("Token does not have gist permissions.");

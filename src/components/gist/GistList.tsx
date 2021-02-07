@@ -1,61 +1,58 @@
-import React, { ReactElement, useContext, useState, useEffect } from "react";
+import React, { ReactElement, useState, useEffect } from "react";
 import { Gist } from "../../api/types";
 import styled from "styled-components";
-import { TokenContext } from "../../App";
 import GistAPI from "../../api/GistAPI";
+import { useHistory, useParams, useRouteMatch } from "react-router-dom";
 
-interface Props {}
+interface ParamTypes {
+  tokenId: string;
+}
 
-export default function GistList({ ...props }: Props): ReactElement {
-  const token = useContext(TokenContext);
+export default function GistList({ ...props }): ReactElement {
+  const { url } = useRouteMatch();
+  const { tokenId } = useParams<ParamTypes>();
+  const history = useHistory();
+
   const [gists, setGists] = useState([] as Gist[]);
   const [page, setPage] = useState(0);
 
   useEffect(() => {
-    GistAPI(token!)
+    GistAPI(tokenId)
       .getAllGists({
         page,
         per_page: 10,
       })
       .then((gists) => {
         setGists(gists);
+      })
+      .catch((e) => {
+        history.push("/login");
       });
     return () => {};
-  }, [token, page]);
+  }, [tokenId, page, history]);
 
   return (
-    <FlexWrapper>
-      <Container>
-        <h2>Select a Gist:</h2>
-        <StyledGistList>
-          {gists.map((gist) => (
-            <GistListItem
-              key={gist.id}
-              onClick={() => {
-                // selectGist(gist);
-              }}
-            >
-              <div>
-                <Description>{gist.description}</Description>
-                <GistId>{gist.id.substr(0, 7)}</GistId>
-              </div>
-              <Button>Delete</Button>
-            </GistListItem>
-          ))}
-        </StyledGistList>
-      </Container>
-    </FlexWrapper>
+    <Container>
+      <h2>Select a Gist:</h2>
+      <StyledGistList>
+        {gists.map((gist) => (
+          <GistListItem
+            key={gist.id}
+            onClick={() => {
+              history.push(`${url}/gist/${gist.id}`);
+            }}
+          >
+            <div>
+              <Description>{gist.description}</Description>
+              <GistId>{gist.id.substr(0, 7)}</GistId>
+            </div>
+            <Button>Delete</Button>
+          </GistListItem>
+        ))}
+      </StyledGistList>
+    </Container>
   );
 }
-
-const FlexWrapper = styled.div`
-  /* width: 100%;
-  height: 100%;
-
-  display: flex;
-  justify-content: center;
-  align-items: center; */
-`;
 
 const Container = styled.div`
   width: 100%;

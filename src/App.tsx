@@ -1,27 +1,29 @@
-import React, { createContext, ReactElement, useState } from "react";
+import React, { ReactElement } from "react";
 import styled from "styled-components";
 import { Login } from "./components/login/Login";
 import GistList from "./components/gist/GistList";
-
-type TokenState = string | null;
-
-export const TokenContext = createContext<TokenState>(null);
+import { Switch, Route, Redirect } from "react-router-dom";
 
 export default function App(): ReactElement {
-  const [token, setToken] = useState<TokenState>(null);
-
   return (
     <AppWrapper>
-      {!token && (
-        <Login
-          setToken={(input) => {
-            setToken(input);
-          }}
-        />
-      )}
-      <TokenContext.Provider value={token}>
-        {token && <GistList />}
-      </TokenContext.Provider>
+      <Switch>
+        <Route path="/token/:tokenId/gist/:gistId">
+          <div>This works great! I think.</div>
+        </Route>
+        <Route path="/token/:tokenId">
+          <GistList />
+        </Route>
+        <Route path="/login">
+          <Login />
+        </Route>
+        <Route exact path="/">
+          <Redirect to="/login" />
+        </Route>
+        <Route>
+          <div>Bad link</div>
+        </Route>
+      </Switch>
     </AppWrapper>
   );
 }
