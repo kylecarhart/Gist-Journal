@@ -2,7 +2,7 @@ import React, { ReactElement } from "react";
 import styled from "styled-components";
 import { Login } from "./components/login/Login";
 import GistList from "./components/gist/GistList";
-import { Switch, Route, Redirect } from "react-router-dom";
+import { Switch, Route } from "react-router-dom";
 
 export default function App(): ReactElement {
   return (
@@ -14,11 +14,8 @@ export default function App(): ReactElement {
         <Route path="/token/:tokenId">
           <GistList />
         </Route>
-        <Route path="/login">
-          <Login />
-        </Route>
         <Route exact path="/">
-          <Redirect to="/login" />
+          <Login />
         </Route>
         <Route>
           <div>Bad link</div>

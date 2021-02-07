@@ -3,6 +3,7 @@ import { Gist } from "../../api/types";
 import styled from "styled-components";
 import GistAPI from "../../api/GistAPI";
 import { useHistory, useParams, useRouteMatch } from "react-router-dom";
+import { AuthenticationError } from "../../api/GithubAPI";
 
 interface ParamTypes {
   tokenId: string;
@@ -26,7 +27,9 @@ export default function GistList({ ...props }): ReactElement {
         setGists(gists);
       })
       .catch((e) => {
-        history.push("/login");
+        if (e instanceof AuthenticationError) {
+          history.push("/");
+        }
       });
     return () => {};
   }, [tokenId, page, history]);

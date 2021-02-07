@@ -63,10 +63,11 @@ export default function GithubAPI(token: string) {
       body: opts?.body,
     });
 
-    if (res.ok) {
-      return res;
-    } else {
-      throw res;
+    switch (res.status) {
+      case 401:
+        throw new AuthenticationError();
+      default:
+        return res;
     }
   }
 
@@ -82,4 +83,11 @@ export default function GithubAPI(token: string) {
   }
 
   return { fetch, getAuthScopes };
+}
+
+// Invalid token
+export class AuthenticationError extends Error {
+  constructor() {
+    super("Invalid token.");
+  }
 }

@@ -1,6 +1,7 @@
 import React, { ReactElement, useRef, useState } from "react";
 import { useHistory } from "react-router-dom";
 import styled, { keyframes } from "styled-components";
+import { AuthenticationError } from "../../api/GithubAPI";
 import GithubAPI from "../../api/GithubAPI";
 import { ReactComponent as GithubLogo } from "./github.svg";
 
@@ -23,8 +24,8 @@ export function Login({ ...props }): ReactElement {
         setHasError(true);
         setErrorText("Token does not have gist permissions.");
       }
-    } catch (res) {
-      if (res.status === 401) {
+    } catch (e) {
+      if (e instanceof AuthenticationError) {
         setHasError(true);
         setErrorText("Invalid token.");
       }
