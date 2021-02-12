@@ -6,9 +6,6 @@ import { Switch, Route } from "react-router-dom";
 import Journal from "./components/journal/Journal";
 import NotFound from "./components/common/NotFound";
 
-// 9549c62f8ab756fadae7a86a9ec46e4cda362e1b - nothing
-// 0cc0eb55ed15649337965783462a8ca58e943c5b - gists
-
 export default function App(): ReactElement {
   return (
     <AppWrapper>
