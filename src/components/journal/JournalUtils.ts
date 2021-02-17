@@ -45,7 +45,7 @@ export function JournalAPI(token: string) {
 
     return gistAPI.updateGist(gist.id, {
       files: {
-        [month + ".json"]: {
+        [`${month}.json`]: {
           content: JSON.stringify(monthEntries),
         },
       },
