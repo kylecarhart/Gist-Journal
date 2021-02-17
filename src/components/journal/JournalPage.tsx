@@ -2,7 +2,6 @@ import React, { ReactElement, useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { GistAPI } from "../../api";
 import { Gist } from "../../api/types";
-import { forEach } from "lodash";
 
 interface ParamTypes {
   tokenId: string;
@@ -12,6 +11,7 @@ interface ParamTypes {
 export default function Journal(): ReactElement {
   const { tokenId, gistId } = useParams<ParamTypes>();
   const [gist, setGist] = useState<null | Gist>(null);
+  const [date, setDate] = useState(new Date());
 
   useEffect(() => {
     GistAPI(tokenId)
@@ -25,5 +25,5 @@ export default function Journal(): ReactElement {
     return () => {};
   }, [tokenId, gistId]);
 
-  return <div>{gist?.files["02.json"].content}</div>;
+  return <div></div>;
 }

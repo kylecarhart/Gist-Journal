@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { Login } from "./components/login/Login";
 import GistList from "./components/gist/GistList";
 import { Switch, Route } from "react-router-dom";
-import Journal from "./components/journal/Journal";
+import Journal from "./components/journal/JournalPage";
 import NotFound from "./components/common/NotFound";
 
 export default function App(): ReactElement {
