@@ -1,9 +1,10 @@
 import React, { ReactElement, useState, useEffect } from "react";
-import { Gist } from "../../api/types";
 import styled from "styled-components";
 import GistAPI from "../../api/GistAPI";
 import { useHistory, useParams, useRouteMatch } from "react-router-dom";
 import { AuthenticationError } from "../../api/GithubAPI";
+import { IGistSummary } from "../../api/gist.types";
+import { getAllGistJournals } from "../journal/GistJournalAPI";
 
 interface ParamTypes {
   tokenId: string;
@@ -14,23 +15,30 @@ export default function GistList({ ...props }): ReactElement {
   const { tokenId } = useParams<ParamTypes>();
   const history = useHistory();
 
-  const [gists, setGists] = useState([] as Gist[]);
+  const [gists, setGists] = useState<IGistSummary[] | null>(null);
   const [page, setPage] = useState(0);
 
   useEffect(() => {
-    GistAPI(tokenId)
-      .getAllGists({
-        page,
-        per_page: 10,
-      })
-      .then((gists) => {
-        setGists(gists);
-      })
-      .catch((e) => {
-        if (e instanceof AuthenticationError) {
-          history.push("/");
-        }
-      });
+    async function _getAllGistJournals() {
+      setGists(await getAllGistJournals(tokenId));
+    }
+
+    _getAllGistJournals();
+
+    // GistAPI(tokenId)
+    //   .getAllGists({
+    //     page,
+    //     per_page: 10,
+    //   })
+    //   .then((gists) => {
+    //     gists = gists.filter((gist)=>gist.files.)
+    //     setGists(gists);
+    //   })
+    //   .catch((e) => {
+    //     if (e instanceof AuthenticationError) {
+    //       history.push("/");
+    //     }
+    //   });
     return () => {};
   }, [tokenId, page, history]);
 
@@ -38,7 +46,7 @@ export default function GistList({ ...props }): ReactElement {
     <Container>
       <h2>Select a Gist:</h2>
       <StyledGistList>
-        {gists.map((gist) => (
+        {gists?.map((gist) => (
           <GistListItem
             key={gist.id}
             onClick={() => {

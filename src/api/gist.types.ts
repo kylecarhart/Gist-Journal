@@ -1,14 +1,17 @@
-interface File {
-  content?: string;
+export interface IFile {
   filename: string;
   language: string;
   raw_url: string;
   size: number;
-  truncated: boolean;
   type: string;
 }
 
-interface User {
+export interface IFileWithContent extends IFile {
+  content: string;
+  truncated: boolean;
+}
+
+export interface IUser {
   avatar_url: string;
   events_url: string;
   followers_url: string;
@@ -29,7 +32,7 @@ interface User {
   url: string;
 }
 
-interface History {
+export interface IHistory {
   change_status: {
     total: number;
     additions: number;
@@ -37,29 +40,36 @@ interface History {
   };
   committed_at: string;
   url: string;
-  user: User;
+  user: IUser;
   version: string;
 }
 
-export interface Gist {
+export interface IGist {
   comments: number;
   comments_url: string;
   commits_url: string;
   created_at: string;
   description: string;
-  files: { [key: string]: File };
-  forks: string[];
   forks_url: string;
   git_pull_url: string;
   git_push_url: string;
-  history: History[];
   html_url: string;
   id: string;
   node_id: string;
-  owner: User;
+  owner: IUser;
   public: boolean;
   truncated: boolean;
   updated_at: string;
   url: string;
-  user: User;
+  user: IUser;
+}
+
+export interface IGistDetail extends IGist {
+  files: { [key: string]: IFileWithContent };
+  forks: string[];
+  history: IHistory[];
+}
+
+export interface IGistSummary extends IGist {
+  files: { [key: string]: IFile };
 }

@@ -1,4 +1,5 @@
-import { Gist } from "./types";
+// import Gist from "../components/gist/Gist";
+import { IGistDetail, IGistSummary } from "./gist.types";
 import GithubAPI from "./GithubAPI";
 
 const GIST_ENDPOINT: string = "/gists";
@@ -6,16 +7,20 @@ const GIST_ENDPOINT: string = "/gists";
 export default function GistAPI(token: string) {
   const api = GithubAPI(token);
 
+  type IGetAllGistsParams = {
+    per_page?: number;
+    page?: number;
+  };
+
   /**
    * Get authenticated users
    */
-  async function getAllGists(params?: {
-    per_page?: number;
-    page?: number;
-  }): Promise<Gist[]> {
+  async function getAllGists(
+    params?: IGetAllGistsParams
+  ): Promise<IGistSummary[]> {
     const res = await api.fetch(GIST_ENDPOINT, { params });
     if (res.status === 200) {
-      return res.json();
+      return await res.json();
     } else {
       throw res;
     }
@@ -25,37 +30,39 @@ export default function GistAPI(token: string) {
    * Retrieve a Gist based on the provided ID.
    * @param gistId - The ID of the Gist.
    */
-  async function getGist(gistId: string): Promise<Gist> {
+  async function getGist(gistId: string): Promise<IGistDetail> {
     const res = await api.fetch(`${GIST_ENDPOINT}/${gistId}`);
 
     if (res.status === 200) {
-      return res.json();
+      return await res.json();
     } else {
       throw res;
     }
+  }
+
+  interface ICreateGistParams {
+    description?: string;
+    files: {
+      [filename: string]: {
+        filename?: string;
+        content: string;
+      };
+    };
+    public?: boolean;
   }
 
   /**
    * Create a gist.
    * @param gist - Gist request object.
    */
-  async function createGist(gist: {
-    files: {
-      [key: string]: {
-        content: string;
-        filename?: string;
-      };
-    };
-    public: boolean;
-    description?: string;
-  }): Promise<Gist> {
+  async function createGist(gist: ICreateGistParams): Promise<IGistDetail> {
     const res = await api.fetch(GIST_ENDPOINT, {
       method: "POST",
-      body: JSON.stringify({ description: "", ...gist }),
+      body: JSON.stringify(gist),
     });
 
     if (res.status === 200) {
-      return res.json();
+      return await res.json();
     } else {
       throw res;
     }
@@ -68,23 +75,15 @@ export default function GistAPI(token: string) {
    */
   async function updateGist(
     gistId: string,
-    gist: {
-      description?: string;
-      files: {
-        [key: string]: {
-          content: string;
-          filename?: string;
-        };
-      };
-    }
-  ): Promise<Gist> {
+    gist: Exclude<ICreateGistParams, "public">
+  ): Promise<IGistDetail> {
     const res = await api.fetch(`${GIST_ENDPOINT}/${gistId}`, {
       method: "PATCH",
-      body: JSON.stringify({ ...gist }),
+      body: JSON.stringify(gist),
     });
 
     if (res.status === 200) {
-      return res.json();
+      return await res.json();
     } else {
       throw res;
     }
