@@ -21,7 +21,20 @@ class Journal {
       }
     });
 
-    return entry ? entry : null;
+    return entry;
+  }
+
+  setEntry(month: number, day: number, entry: Entry) {
+    const fromEntry = this.getEntry(month, day);
+    if (fromEntry) {
+      this.entries.splice(
+        this.entries.findIndex((_entry) => _entry === fromEntry),
+        1,
+        entry
+      );
+    } else {
+      this.entries.push(entry);
+    }
   }
 }
 

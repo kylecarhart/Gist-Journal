@@ -1,7 +1,5 @@
 import React, { ReactElement } from "react";
 
-interface Props {}
-
-export default function NotFound({}: Props): ReactElement {
+export default function NotFound(): ReactElement {
   return <div>404 Not Found</div>;
 }

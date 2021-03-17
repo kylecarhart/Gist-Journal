@@ -19,68 +19,92 @@ function addDaysToDate(date: Date, days: number) {
 export default function JournalPage(): ReactElement {
   const { tokenId, gistId } = useParams<ParamTypes>();
 
-  const [journal, setJournal] = useState<Journal | null>(null);
   const [date, setDate] = useState(new Date());
-  const [entry, setEntry] = useState();
-  const [entryText, setEntryText] = useState<string | null>(null);
+
+  const [journal, setJournal] = useState<Journal | null>(null);
+  const [entry, setEntry] = useState<Entry>();
+  const [entryText, setEntryText] = useState("");
 
   const [showCalendar, setShowCalendar] = useState(false);
   const calendarRef = useRef<HTMLDivElement>(null!);
+  const dateHeaderRef = useRef<HTMLHeadingElement>(null!);
 
-  useOutsideClick(calendarRef, () => {
-    setShowCalendar(false);
+  useOutsideClick(calendarRef, (e) => {
+    if (!dateHeaderRef.current?.contains(e.target as Node) && showCalendar) {
+      setShowCalendar(false);
+    }
   });
 
   useEffect(() => {
     const getJournal = async () => {
-      let journal = await getGistAsJournal(tokenId, gistId);
+      let fetchedJournal = await getGistAsJournal(tokenId, gistId);
 
-      if (journal) {
-        setJournal(journal);
-        const entry = journal.getEntry(date.getMonth(), date.getDate());
-        if (entry) {
-          setEntryText(entry.text);
-        }
+      if (fetchedJournal) {
+        setJournal(fetchedJournal);
+        setDate((date) => {
+          return new Date(fetchedJournal.year, date.getMonth(), date.getDate());
+        });
+
+        const entry = fetchedJournal.getEntry(date.getMonth(), date.getDate());
+        setEntry(entry);
+        setEntryText(entry?.text || "");
+      } else {
+        throw new Error("Journal Fetch Error");
       }
     };
 
-    getJournal();
+    if (!journal) {
+      try {
+        getJournal();
+      } catch (e) {
+        console.log(e);
+      }
+    }
+
     return () => {};
-  }, [tokenId, gistId]);
+  }, [tokenId, gistId, date, journal]);
+
+  function changeDate(date: Date) {
+    setDate(date);
+
+    if (journal) {
+      const entry = journal.getEntry(date.getMonth(), date.getDate());
+      if (entry) {
+        setEntry(entry);
+        setEntryText(entry.text);
+      } else {
+        setEntry(new Entry(date.getMonth(), date.getDate()));
+        setEntryText("");
+      }
+    }
+  }
+
+  function saveEntry() {
+    if (journal && entry) {
+      entry.text = entryText;
+      journal.setEntry(date.getMonth(), date.getDate(), entry);
+      saveJournalEntryAsGist(tokenId, gistId, journal, entry);
+    }
+  }
 
   return (
     <div>
       <button
         onClick={() => {
-          setDate(addDaysToDate(date, -1));
-          if (journal) {
-            const entry = journal.getEntry(date.getMonth(), date.getDate());
-            if (entry) {
-              setEntryText(entry.text);
-            } else {
-              setEntryText(null);
-            }
-          }
+          changeDate(addDaysToDate(date, -1));
         }}
       >
         Decrease day
       </button>
       <button
         onClick={() => {
-          setDate(addDaysToDate(date, 1));
-          if (journal) {
-            const entry = journal.getEntry(date.getMonth(), date.getDate());
-            if (entry) {
-              setEntryText(entry.text);
-            } else {
-              setEntryText(null);
-            }
-          }
+          changeDate(addDaysToDate(date, 1));
         }}
       >
         Increase day
       </button>
       <DateHeader
+        ref={dateHeaderRef}
         onClick={() => {
           setShowCalendar(true);
         }}
@@ -96,29 +120,19 @@ export default function JournalPage(): ReactElement {
           ref={calendarRef}
           initialDate={date}
           onDateSelect={(date) => {
-            setDate(date);
-            // setEntryText(journal!.getEntry(date.getMonth(), date.getDate()));
+            changeDate(date);
           }}
         />
       )}
       <textarea
-        value={entryText || ""}
+        value={entryText}
         onChange={(e) => {
           setEntryText(e.target.value);
         }}
       />
       <button
         onClick={() => {
-          // console.log("i press da button");
-          if (journal && entryText) {
-            // journal.setEntry(date.getMonth(), date.getDate(), entryText);
-            saveJournalEntryAsGist(
-              tokenId,
-              gistId,
-              journal,
-              new Entry(date.getMonth(), date.getDate(), entryText)
-            );
-          }
+          saveEntry();
         }}
       >
         Save

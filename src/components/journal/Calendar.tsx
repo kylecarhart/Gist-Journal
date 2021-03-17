@@ -11,7 +11,7 @@ type Ref = HTMLDivElement;
 const months = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 function getDaysInMonth(year: number, month: number) {
-  return new Date(year, month, 0).getDate();
+  return new Date(year, month + 1, 0).getDate();
 }
 
 function addMonthsToDate(date: Date, months: number) {
@@ -31,24 +31,37 @@ const Calendar = React.forwardRef<Ref, Props>(
     };
 
     const renderCells = () => {
-      const numDays = getDaysInMonth(
+      const numDaysPrevMonth = getDaysInMonth(
+        viewDate.getFullYear(),
+        viewDate.getMonth() - 1
+      );
+
+      const numDaysCurrMonth = getDaysInMonth(
         viewDate.getFullYear(),
         viewDate.getMonth()
       );
+
+      const numDaysNextMonth = getDaysInMonth(
+        viewDate.getFullYear(),
+        viewDate.getMonth() + 1
+      );
+
       const offset = new Date(
         viewDate.getFullYear(),
         viewDate.getMonth(),
         1
       ).getDay();
+
       const cells = [];
 
       // Fill the array with blanks to offset the calendar display
-      for (let i = 0; i < offset; i++) {
+      for (let i = numDaysPrevMonth - offset + 1; i <= numDaysPrevMonth; i++) {
+        // console.log(i);
         cells.push(undefined);
       }
 
       // Fill the calendar cells with the day numbers
-      for (let i = 1; i <= numDays; i++) {
+      for (let i = 1; i <= numDaysCurrMonth; i++) {
         cells.push(i);
       }
 
