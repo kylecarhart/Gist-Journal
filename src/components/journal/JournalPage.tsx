@@ -7,6 +7,7 @@ import Entry from "./Entry";
 import { getGistAsJournal, saveJournalEntryAsGist } from "./GistJournalAPI";
 import Journal from "./Journal";
 import { addDays } from "date-fns";
+import { BsChevronCompactLeft, BsChevronCompactRight } from "react-icons/bs";
 
 interface ParamTypes {
   tokenId: string;
@@ -89,32 +90,36 @@ export default function JournalPage(): ReactElement {
 
   return (
     <div>
-      <button
-        onClick={() => {
-          changeDate(addDays(date, -1));
-        }}
-      >
-        Decrease day
-      </button>
-      <button
-        onClick={() => {
-          changeDate(addDays(date, 1));
-        }}
-      >
-        Increase day
-      </button>
-      <DateHeader
-        ref={dateHeaderRef}
-        onClick={() => {
-          setShowCalendar(true);
-        }}
-      >
-        {date.toLocaleString("default", {
-          year: "numeric",
-          month: "long",
-          day: "numeric",
-        })}
-      </DateHeader>
+      <DateHeading>
+        <ModifyDayButton
+          onClick={() => {
+            changeDate(addDays(date, -1));
+          }}
+        >
+          <BsChevronCompactLeft size={42} />
+        </ModifyDayButton>
+        <DateHeader
+          ref={dateHeaderRef}
+          onClick={() => {
+            setShowCalendar(true);
+          }}
+        >
+          {date.toLocaleString("default", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          })}
+        </DateHeader>
+        <ModifyDayButton>
+          <BsChevronCompactRight
+            size={42}
+            onClick={() => {
+              changeDate(addDays(date, 1));
+            }}
+          />
+        </ModifyDayButton>
+      </DateHeading>
+
       {showCalendar && (
         <Calendar
           ref={calendarRef}
@@ -143,4 +148,21 @@ export default function JournalPage(): ReactElement {
 
 const DateHeader = styled.h1`
   cursor: pointer;
+  margin: 0;
+`;
+
+const DateHeading = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+const ModifyDayButton = styled.button`
+  background: none;
+  border: none;
+  cursor: pointer;
+
+  &:hover {
+    /* color: #333; */
+  }
 `;

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import { getDaysInMonth, addMonths } from "date-fns";
+import { getDaysInMonth, addMonths, isToday } from "date-fns";
 
 import CalendarCell from "./CalendarCell";
 
@@ -58,6 +58,7 @@ const Calendar = React.forwardRef<Ref, Props>(
           <CalendarCell
             key={`${viewDateMonth}-${i}`}
             isCurrMonth={true}
+            isToday={isToday(new Date(viewDateYear, viewDateMonth, i))}
             isSelected={
               i === selectedDate.getDate() &&
               selectedDate.getMonth() === viewDate.getMonth()
@@ -90,8 +91,8 @@ const Calendar = React.forwardRef<Ref, Props>(
     };
 
     return (
-      <div ref={ref}>
-        <div>
+      <CalendarWrapper ref={ref}>
+        {/* <div>
           {viewDate.toLocaleString("default", {
             month: "long",
           })}
@@ -109,7 +110,7 @@ const Calendar = React.forwardRef<Ref, Props>(
           }}
         >
           Increase month
-        </button>
+        </button> */}
 
         <Header>
           {months.map((month) => (
@@ -117,7 +118,7 @@ const Calendar = React.forwardRef<Ref, Props>(
           ))}
         </Header>
         <CellContainer>{renderCells()}</CellContainer>
-      </div>
+      </CalendarWrapper>
     );
   }
 );
@@ -126,12 +127,22 @@ const Header = styled.div`
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   text-align: center;
+  margin-bottom: 1rem;
 `;
 
 const CellContainer = styled.div`
+  font-size: 14px;
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   grid-template-rows: repeat(6, 1fr);
+  grid-row-gap: 0.5em;
+`;
+
+const CalendarWrapper = styled.div`
+  border-radius: 0.5rem;
+  padding: 4rem;
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px,
+    rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
 `;
 
 export default Calendar;
