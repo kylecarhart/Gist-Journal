@@ -6,14 +6,11 @@ import Calendar from "./Calendar";
 import Entry from "./Entry";
 import { getGistAsJournal, saveJournalEntryAsGist } from "./GistJournalAPI";
 import Journal from "./Journal";
+import { addDays } from "date-fns";
 
 interface ParamTypes {
   tokenId: string;
   gistId: string;
-}
-
-function addDaysToDate(date: Date, days: number) {
-  return new Date(date.setDate(date.getDate() + days));
 }
 
 export default function JournalPage(): ReactElement {
@@ -81,9 +78,12 @@ export default function JournalPage(): ReactElement {
 
   function saveEntry() {
     if (journal && entry) {
-      entry.text = entryText;
-      journal.setEntry(date.getMonth(), date.getDate(), entry);
-      saveJournalEntryAsGist(tokenId, gistId, journal, entry);
+      try {
+        entry.text = entryText;
+        journal.setEntry(date.getMonth(), date.getDate(), entry);
+        saveJournalEntryAsGist(tokenId, gistId, journal, entry);
+        alert("Journal saved");
+      } catch (e) {}
     }
   }
 
@@ -91,14 +91,14 @@ export default function JournalPage(): ReactElement {
     <div>
       <button
         onClick={() => {
-          changeDate(addDaysToDate(date, -1));
+          changeDate(addDays(date, -1));
         }}
       >
         Decrease day
       </button>
       <button
         onClick={() => {
-          changeDate(addDaysToDate(date, 1));
+          changeDate(addDays(date, 1));
         }}
       >
         Increase day

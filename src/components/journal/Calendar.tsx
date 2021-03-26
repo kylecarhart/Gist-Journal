@@ -1,5 +1,8 @@
 import React, { useState } from "react";
 import styled from "styled-components";
+import { getDaysInMonth, addMonths } from "date-fns";
+
+import CalendarCell from "./CalendarCell";
 
 interface Props {
   initialDate?: Date;
@@ -10,14 +13,6 @@ type Ref = HTMLDivElement;
 
 const months = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
-function getDaysInMonth(year: number, month: number) {
-  return new Date(year, month + 1, 0).getDate();
-}
-
-function addMonthsToDate(date: Date, months: number) {
-  return new Date(date.setMonth(date.getMonth() + months));
-}
-
 const Calendar = React.forwardRef<Ref, Props>(
   ({ initialDate, onDateSelect }, ref) => {
     const [selectedDate, setSelectedDate] = useState(
@@ -25,68 +20,73 @@ const Calendar = React.forwardRef<Ref, Props>(
     );
     const [viewDate, setViewDate] = useState(new Date(selectedDate));
 
+    const viewDateYear = viewDate.getFullYear();
+    const viewDateMonth = viewDate.getMonth();
+
     const handleOnDateSelect = (date: Date) => {
-      setSelectedDate(date);
-      onDateSelect(date);
+      setSelectedDate(new Date(date));
+      setViewDate(new Date(date));
+      onDateSelect(new Date(date));
     };
 
     const renderCells = () => {
-      const numDaysPrevMonth = getDaysInMonth(
-        viewDate.getFullYear(),
-        viewDate.getMonth() - 1
-      );
+      const numDaysPrevMonth = getDaysInMonth(addMonths(viewDate, -1));
+      const numDaysCurrMonth = getDaysInMonth(addMonths(viewDate, 1));
 
-      const numDaysCurrMonth = getDaysInMonth(
-        viewDate.getFullYear(),
-        viewDate.getMonth()
-      );
-
-      const numDaysNextMonth = getDaysInMonth(
-        viewDate.getFullYear(),
-        viewDate.getMonth() + 1
-      );
-
-      const offset = new Date(
-        viewDate.getFullYear(),
-        viewDate.getMonth(),
-        1
-      ).getDay();
+      const offset = new Date(viewDateYear, viewDateMonth, 1).getDay();
 
       const cells = [];
 
-      // Fill the array with blanks to offset the calendar display
+      // Fill in the days preceding the current month
       for (let i = numDaysPrevMonth - offset + 1; i <= numDaysPrevMonth; i++) {
-        // console.log(i);
-        cells.push(undefined);
+        cells.push(
+          <CalendarCell
+            key={`${viewDateMonth - 1}-${i}`}
+            isCurrMonth={false}
+            onDaySelect={(month, day) => {
+              handleOnDateSelect(new Date(viewDateYear, month, day));
+            }}
+            day={i}
+            month={viewDateMonth - 1}
+          />
+        );
       }
 
-      // Fill the calendar cells with the day numbers
+      // Fill the calendar with the current month day numbers
       for (let i = 1; i <= numDaysCurrMonth; i++) {
-        cells.push(i);
+        cells.push(
+          <CalendarCell
+            key={`${viewDateMonth}-${i}`}
+            isCurrMonth={true}
+            isSelected={
+              i === selectedDate.getDate() &&
+              selectedDate.getMonth() === viewDate.getMonth()
+            }
+            onDaySelect={(month, day) => {
+              handleOnDateSelect(new Date(viewDateYear, month, day));
+            }}
+            day={i}
+            month={viewDateMonth}
+          />
+        );
       }
 
-      return cells.map((day, idx) => {
-        if (day) {
-          return (
-            <Cell
-              key={idx}
-              selected={
-                day === selectedDate.getDate() &&
-                selectedDate.getMonth() === viewDate.getMonth()
-              }
-              onClick={() => {
-                handleOnDateSelect(
-                  new Date(viewDate.getFullYear(), viewDate.getMonth(), day)
-                );
-              }}
-            >
-              {day}
-            </Cell>
-          );
-        } else {
-          return <div key={idx}></div>; // Padding
-        }
-      });
+      // Fill in the rest of the calendar
+      for (let i = cells.length; i < 42; i++) {
+        cells.push(
+          <CalendarCell
+            key={`${viewDateMonth + 1}-${i - numDaysCurrMonth - offset + 1}`}
+            isCurrMonth={false}
+            onDaySelect={(month, day) => {
+              handleOnDateSelect(new Date(viewDateYear, month, day));
+            }}
+            day={i - numDaysCurrMonth - offset + 1}
+            month={viewDateMonth + 1}
+          />
+        );
+      }
+
+      return cells;
     };
 
     return (
@@ -98,14 +98,14 @@ const Calendar = React.forwardRef<Ref, Props>(
         </div>
         <button
           onClick={() => {
-            setViewDate(addMonthsToDate(viewDate, -1));
+            setViewDate(addMonths(viewDate, -1));
           }}
         >
           Decrease month
         </button>
         <button
           onClick={() => {
-            setViewDate(addMonthsToDate(viewDate, 1));
+            setViewDate(addMonths(viewDate, 1));
           }}
         >
           Increase month
@@ -132,20 +132,6 @@ const CellContainer = styled.div`
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   grid-template-rows: repeat(6, 1fr);
-`;
-
-interface CellProps {
-  selected: boolean;
-}
-
-const Cell = styled.div<CellProps>`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  height: 2rem;
-  cursor: pointer;
-  background: ${(props) => (props.selected ? "lightblue" : "none")};
 `;
 
 export default Calendar;
