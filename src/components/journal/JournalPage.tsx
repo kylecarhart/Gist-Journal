@@ -24,6 +24,7 @@ export default function JournalPage(): ReactElement {
   const [entryText, setEntryText] = useState("");
 
   const [showCalendar, setShowCalendar] = useState(false);
+
   const calendarRef = useRef<HTMLDivElement>(null!);
   const dateHeaderRef = useRef<HTMLHeadingElement>(null!);
 
@@ -89,8 +90,8 @@ export default function JournalPage(): ReactElement {
   }
 
   return (
-    <div>
-      <DateHeading>
+    <PageWrapper>
+      <DateHeaderWrapper>
         <ModifyDayButton
           onClick={() => {
             changeDate(addDays(date, -1));
@@ -118,10 +119,10 @@ export default function JournalPage(): ReactElement {
             }}
           />
         </ModifyDayButton>
-      </DateHeading>
+      </DateHeaderWrapper>
 
       {showCalendar && (
-        <Calendar
+        <StyledCalendar
           ref={calendarRef}
           initialDate={date}
           onDateSelect={(date) => {
@@ -129,32 +130,35 @@ export default function JournalPage(): ReactElement {
           }}
         />
       )}
-      <textarea
+      <TextArea
         value={entryText}
         onChange={(e) => {
           setEntryText(e.target.value);
         }}
       />
-      <button
+      {/* <button
         onClick={() => {
           saveEntry();
         }}
       >
         Save
-      </button>
-    </div>
+      </button> */}
+    </PageWrapper>
   );
 }
 
 const DateHeader = styled.h1`
   cursor: pointer;
   margin: 0;
+  min-width: 30rem;
+  text-align: center;
 `;
 
-const DateHeading = styled.div`
+const DateHeaderWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 1rem;
 `;
 
 const ModifyDayButton = styled.button`
@@ -165,4 +169,19 @@ const ModifyDayButton = styled.button`
   &:hover {
     /* color: #333; */
   }
+`;
+
+const PageWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  padding: 2rem;
+`;
+
+const TextArea = styled.textarea`
+  flex-grow: 1;
+`;
+
+const StyledCalendar = styled(Calendar)`
+  position: absolute;
 `;

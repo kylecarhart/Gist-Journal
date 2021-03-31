@@ -1,20 +1,22 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import { getDaysInMonth, addMonths, isToday } from "date-fns";
+import { BiChevronLeft, BiChevronRight } from "react-icons/bi";
 
 import CalendarCell from "./CalendarCell";
 
 interface Props {
   initialDate?: Date;
   onDateSelect: (date: Date) => void;
+  className?: string;
 }
 
 type Ref = HTMLDivElement;
 
-const months = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 const Calendar = React.forwardRef<Ref, Props>(
-  ({ initialDate, onDateSelect }, ref) => {
+  ({ initialDate, onDateSelect, className }, ref) => {
     const [selectedDate, setSelectedDate] = useState(
       new Date(initialDate || new Date())
     );
@@ -31,7 +33,7 @@ const Calendar = React.forwardRef<Ref, Props>(
 
     const renderCells = () => {
       const numDaysPrevMonth = getDaysInMonth(addMonths(viewDate, -1));
-      const numDaysCurrMonth = getDaysInMonth(addMonths(viewDate, 1));
+      const numDaysCurrMonth = getDaysInMonth(viewDate);
 
       const offset = new Date(viewDateYear, viewDateMonth, 1).getDay();
 
@@ -91,39 +93,41 @@ const Calendar = React.forwardRef<Ref, Props>(
     };
 
     return (
-      <CalendarWrapper ref={ref}>
-        {/* <div>
-          {viewDate.toLocaleString("default", {
-            month: "long",
-          })}
-        </div>
-        <button
-          onClick={() => {
-            setViewDate(addMonths(viewDate, -1));
-          }}
-        >
-          Decrease month
-        </button>
-        <button
-          onClick={() => {
-            setViewDate(addMonths(viewDate, 1));
-          }}
-        >
-          Increase month
-        </button> */}
+      <CalendarWrapper ref={ref} className={className}>
+        <CalendarHeader>
+          <MonthButton
+            onClick={() => {
+              setViewDate(addMonths(viewDate, -1));
+            }}
+          >
+            <BiChevronLeft />
+          </MonthButton>
+          <CalendarHeaderMonth>
+            {viewDate.toLocaleString("default", {
+              month: "long",
+            })}
+          </CalendarHeaderMonth>
+          <MonthButton
+            onClick={() => {
+              setViewDate(addMonths(viewDate, 1));
+            }}
+          >
+            <BiChevronRight />
+          </MonthButton>
+        </CalendarHeader>
 
-        <Header>
-          {months.map((month) => (
+        <DaysOfWeek>
+          {daysOfWeek.map((month) => (
             <div key={month}>{month}</div>
           ))}
-        </Header>
+        </DaysOfWeek>
         <CellContainer>{renderCells()}</CellContainer>
       </CalendarWrapper>
     );
   }
 );
 
-const Header = styled.div`
+const DaysOfWeek = styled.div`
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   text-align: center;
@@ -140,9 +144,32 @@ const CellContainer = styled.div`
 
 const CalendarWrapper = styled.div`
   border-radius: 0.5rem;
-  padding: 4rem;
+  padding: 2rem;
+  max-width: 40rem;
   box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px,
     rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
+  background: #fff;
+  width: 50%;
+  left: 50%;
+  transform: translate(-50%);
+`;
+
+const CalendarHeader = styled.div`
+  display: flex;
+  justify-content: center;
+  padding-bottom: 1.5rem;
+`;
+
+const MonthButton = styled.button`
+  background: none;
+  border: none;
+  cursor: pointer;
+`;
+
+const CalendarHeaderMonth = styled.span`
+  font-size: 1rem;
+  min-width: 9em;
+  text-align: center;
 `;
 
 export default Calendar;
